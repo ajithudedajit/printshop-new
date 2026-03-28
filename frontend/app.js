@@ -4,6 +4,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+const BASE_URL = "https://printshop-new-2.onrender.com";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB-uJjPZF7cQfug1ZB4_QswypVuSTHgW74",
   authDomain: "newapp-7e40c.firebaseapp.com",
@@ -154,7 +156,7 @@ async function handleSignup(e) {
   btn.textContent = '⏳ Creating account...';
   btn.disabled = true;
   try {
-    const res = await fetch('/api/signup', {
+    const res = await fetch('${BASE_URL}/api/signup', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: document.getElementById('signupName').value,
@@ -189,7 +191,7 @@ async function handleGoogleLogin() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    const res = await fetch('/api/google-login', {
+    const res = await fetch('${BASE_URL}/api/google-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: user.displayName, email: user.email, googleId: user.uid }),
@@ -311,7 +313,7 @@ async function renderStudentHomeStats() {
 }
 
 async function renderCRHomeStats() {
-  const dashRes = await fetch('/api/dashboard', { credentials: 'include' });
+  const dashRes = await fetch('${BASE_URL}/api/dashboard', { credentials: 'include' });
   if (!dashRes.ok) return;
   const dash = await dashRes.json();
   document.getElementById('homeStats').innerHTML = `
@@ -330,7 +332,7 @@ async function renderCRHomeStats() {
 // ============================================================
 async function loadPolls() {
   try {
-    const res = await fetch('/api/polls', { credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/polls', { credentials: 'include' });
     allPolls = await res.json();
     renderPollsList('pollsList');
     renderPollsList('pollsPageList');
@@ -472,7 +474,7 @@ function closePollModal(e) {
 async function joinPoll(pollId) {
   const copies = parseInt(document.getElementById('joinCopies')?.value) || 1;
   try {
-    const res = await fetch('/api/join-poll', {
+    const res = await fetch('${BASE_URL}/api/join-poll', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pollId, copies }),
       credentials: 'include'
@@ -568,7 +570,7 @@ async function submitPayment(e, pollId) {
   const screenshot = document.getElementById('screenshotUpload')?.files?.[0];
   if (screenshot) formData.append('screenshot', screenshot);
   try {
-    const res = await fetch('/api/submit-payment', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/submit-payment', { method: 'POST', body: formData, credentials: 'include' });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     const msgs = { fraud: '🚫 Fraud detected: Duplicate transaction ID!', suspicious: '⚠️ Payment flagged as suspicious', pending: '✅ Payment submitted! Awaiting CR approval' };
@@ -615,7 +617,7 @@ async function handleCreatePoll(e) {
   const qrFile = document.getElementById('qrUpload')?.files?.[0];
   if (qrFile) formData.append('qrImage', qrFile);
   try {
-    const res = await fetch('https://printshop-backend.onrender.com/api/create-poll', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/create-poll', { method: 'POST', body: formData, credentials: 'include' });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     toast(`Poll created for "${data.poll.subject}" 🎉`, 'success');
@@ -642,7 +644,7 @@ async function loadDashboard() {
 
   if (isCR) {
     try {
-      const res = await fetch('/api/dashboard', { credentials: 'include' });
+      const res = await fetch('${BASE_URL}/api/dashboard', { credentials: 'include' });
       const dash = await res.json();
       renderDashStats(dash);
       renderCharts(dash);
@@ -651,7 +653,7 @@ async function loadDashboard() {
     } catch (e) { toast('Failed to load dashboard', 'error'); }
   } else {
     try {
-      const res = await fetch('/api/student-dashboard', { credentials: 'include' });
+      const res = await fetch('${BASE_URL}/api/student-dashboard', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed');
       const dash = await res.json();
       renderStudentDashboard(dash);
@@ -751,7 +753,7 @@ async function loadPaymentsPage() {
   for (const poll of allPolls) {
     try {
       const pid = poll._id || poll.id;
-      const res = await fetch(`/api/payments/${pid}`, { credentials: 'include' });
+      const res = await fetch(`${BASE_URL}/api/payments/${pid}`, { credentials: 'include' });
       if (res.ok) {
         const payments = await res.json();
         payments.forEach(p => paymentData.push({ ...p, pollSubject: poll.subject }));
@@ -781,7 +783,7 @@ async function renderMyPaymentsPage() {
 
 async function fetchMyPayments() {
   try {
-    const res = await fetch('/api/my-payments', { credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/my-payments', { credentials: 'include' });
     return res.ok ? await res.json() : [];
   } catch { return []; }
 }
@@ -831,7 +833,7 @@ function filterPayments(filter) {
 
 async function reviewPayment(paymentId, action) {
   try {
-    const res = await fetch(`/api/review-payment/${paymentId}`, {
+    const res = await fetch(`${BASE_URL}/api/review-payment/${paymentId}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action }), credentials: 'include'
     });
@@ -880,7 +882,7 @@ function closeReviewModal(e) {
 async function closePoll(pollId) {
   if (!confirm('Close this poll? Students can no longer join.')) return;
   try {
-    const res = await fetch(`/api/close-poll/${pollId}`, { method: 'POST', credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/close-poll/${pollId}`, { method: 'POST', credentials: 'include' });
     if (!res.ok) throw new Error('Failed');
     toast('Poll closed', 'info');
     document.getElementById('pollModal').classList.remove('open');
@@ -896,7 +898,7 @@ async function openPaymentsForPoll(pollId) {
 
 async function viewReport(pollId) {
   try {
-    const res = await fetch(`/api/report/${pollId}`, { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/report/${pollId}`, { credentials: 'include' });
     const report = await res.json();
     const s = report.summary;
     toast(`Report: ₹${s.totalRevenue} collected, ${s.totalParticipants} students`, 'info');
@@ -931,7 +933,7 @@ async function loadProfile() {
     first_poll: { emoji: '🚀', label: 'First Poll', desc: 'Joined your first poll' }
   };
   try {
-    const res = await fetch('/api/me', { credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/me', { credentials: 'include' });
     const user = await res.json();
     const badges = user.badges || [];
     document.getElementById('badgesList').innerHTML = badges.length ? badges.map(b => {
@@ -1043,7 +1045,7 @@ function escHtml(str) {
 // ============================================================
 async function checkSession() {
   try {
-    const res = await fetch('/api/me', { credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/me', { credentials: 'include' });
     if (!res.ok) return;
     currentUser = await res.json();
     onLogin();
@@ -1059,7 +1061,7 @@ async function openDelegateModal() {
   document.getElementById('delegateModal').classList.add('open');
   document.getElementById('delegateModalContent').innerHTML = '<div class="text-center py-8 text-slate-400">Loading classmates...</div>';
   try {
-    const res = await fetch('/api/classmates', { credentials: 'include' });
+    const res = await fetch('${BASE_URL}/api/classmates', { credentials: 'include' });
     const classmates = await res.json();
     document.getElementById('delegateModalContent').innerHTML = `
       <div class="flex items-center justify-between mb-5">
@@ -1101,7 +1103,7 @@ async function confirmDelegate() {
   if (!selected) { toast('Please select a classmate', 'warning'); return; }
   const hours = document.getElementById('delegationHours').value;
   try {
-    const res = await fetch('/api/delegate-cr', {
+    const res = await fetch('${BASE_URL}/api/delegate-cr', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentId: selected.value, hours: parseInt(hours) }),
       credentials: 'include'
