@@ -4,7 +4,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const BASE_URL = "https://printshop-final.onrender.com";
+const BASE_URL = "https://printshop-new-2.onrender.com";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB-uJjPZF7cQfug1ZB4_QswypVuSTHgW74",
