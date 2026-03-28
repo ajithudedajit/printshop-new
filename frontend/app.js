@@ -131,7 +131,7 @@ async function handleLogin(e) {
   btn.textContent = '⏳ Signing in...';
   btn.disabled = true;
   try {
-    const res = await fetch(`${BASE_URL}/api/login', {
+    const res = await fetch(`${BASE_URL}/api/login`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value }),
       credentials: 'include'
@@ -156,7 +156,7 @@ async function handleSignup(e) {
   btn.textContent = '⏳ Creating account...';
   btn.disabled = true;
   try {
-    const res = await fetch('${BASE_URL}/api/signup', {
+    const res = await fetch(`${BASE_URL}/api/signup`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: document.getElementById('signupName').value,
@@ -191,7 +191,7 @@ async function handleGoogleLogin() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    const res = await fetch('${BASE_URL}/api/google-login', {
+    const res = await fetch(`${BASE_URL}/api/google-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: user.displayName, email: user.email, googleId: user.uid }),
@@ -313,7 +313,7 @@ async function renderStudentHomeStats() {
 }
 
 async function renderCRHomeStats() {
-  const dashRes = await fetch('${BASE_URL}/api/dashboard', { credentials: 'include' });
+  const dashRes = await fetch(`${BASE_URL}/api/dashboard`, { credentials: 'include' });
   if (!dashRes.ok) return;
   const dash = await dashRes.json();
   document.getElementById('homeStats').innerHTML = `
@@ -332,7 +332,7 @@ async function renderCRHomeStats() {
 // ============================================================
 async function loadPolls() {
   try {
-    const res = await fetch('${BASE_URL}/api/polls', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/polls`, { credentials: 'include' });
     allPolls = await res.json();
     renderPollsList('pollsList');
     renderPollsList('pollsPageList');
@@ -474,7 +474,7 @@ function closePollModal(e) {
 async function joinPoll(pollId) {
   const copies = parseInt(document.getElementById('joinCopies')?.value) || 1;
   try {
-    const res = await fetch('${BASE_URL}/api/join-poll', {
+    const res = await fetch(`${BASE_URL}/api/join-poll`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pollId, copies }),
       credentials: 'include'
@@ -570,7 +570,7 @@ async function submitPayment(e, pollId) {
   const screenshot = document.getElementById('screenshotUpload')?.files?.[0];
   if (screenshot) formData.append('screenshot', screenshot);
   try {
-    const res = await fetch('${BASE_URL}/api/submit-payment', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/submit-payment`, { method: 'POST', body: formData, credentials: 'include' });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     const msgs = { fraud: '🚫 Fraud detected: Duplicate transaction ID!', suspicious: '⚠️ Payment flagged as suspicious', pending: '✅ Payment submitted! Awaiting CR approval' };
@@ -617,7 +617,7 @@ async function handleCreatePoll(e) {
   const qrFile = document.getElementById('qrUpload')?.files?.[0];
   if (qrFile) formData.append('qrImage', qrFile);
   try {
-    const res = await fetch('${BASE_URL}/api/create-poll', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/create-poll`, { method: 'POST', body: formData, credentials: 'include' });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     toast(`Poll created for "${data.poll.subject}" 🎉`, 'success');
@@ -644,7 +644,7 @@ async function loadDashboard() {
 
   if (isCR) {
     try {
-      const res = await fetch('${BASE_URL}/api/dashboard', { credentials: 'include' });
+      const res = await fetch(`${BASE_URL}/api/dashboard`, { credentials: 'include' });
       const dash = await res.json();
       renderDashStats(dash);
       renderCharts(dash);
@@ -653,7 +653,7 @@ async function loadDashboard() {
     } catch (e) { toast('Failed to load dashboard', 'error'); }
   } else {
     try {
-      const res = await fetch('${BASE_URL}/api/student-dashboard', { credentials: 'include' });
+      const res = await fetch(`${BASE_URL}/api/student-dashboard`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed');
       const dash = await res.json();
       renderStudentDashboard(dash);
@@ -783,7 +783,7 @@ async function renderMyPaymentsPage() {
 
 async function fetchMyPayments() {
   try {
-    const res = await fetch('${BASE_URL}/api/my-payments', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/my-payments`, { credentials: 'include' });
     return res.ok ? await res.json() : [];
   } catch { return []; }
 }
@@ -933,7 +933,7 @@ async function loadProfile() {
     first_poll: { emoji: '🚀', label: 'First Poll', desc: 'Joined your first poll' }
   };
   try {
-    const res = await fetch('${BASE_URL}/api/me', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' });
     const user = await res.json();
     const badges = user.badges || [];
     document.getElementById('badgesList').innerHTML = badges.length ? badges.map(b => {
@@ -1045,7 +1045,7 @@ function escHtml(str) {
 // ============================================================
 async function checkSession() {
   try {
-    const res = await fetch('${BASE_URL}/api/me', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' });
     if (!res.ok) return;
     currentUser = await res.json();
     onLogin();
@@ -1061,7 +1061,7 @@ async function openDelegateModal() {
   document.getElementById('delegateModal').classList.add('open');
   document.getElementById('delegateModalContent').innerHTML = '<div class="text-center py-8 text-slate-400">Loading classmates...</div>';
   try {
-    const res = await fetch('${BASE_URL}/api/classmates', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/api/classmates`, { credentials: 'include' });
     const classmates = await res.json();
     document.getElementById('delegateModalContent').innerHTML = `
       <div class="flex items-center justify-between mb-5">
@@ -1103,7 +1103,7 @@ async function confirmDelegate() {
   if (!selected) { toast('Please select a classmate', 'warning'); return; }
   const hours = document.getElementById('delegationHours').value;
   try {
-    const res = await fetch('${BASE_URL}/api/delegate-cr', {
+    const res = await fetch(`${BASE_URL}/api/delegate-cr`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentId: selected.value, hours: parseInt(hours) }),
       credentials: 'include'
