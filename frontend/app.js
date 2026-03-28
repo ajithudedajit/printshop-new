@@ -131,7 +131,7 @@ async function handleLogin(e) {
   btn.textContent = '⏳ Signing in...';
   btn.disabled = true;
   try {
-    const res = await fetch('/api/login', {
+    const res = await fetch(`${BASE_URL}/api/login', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value }),
       credentials: 'include'
