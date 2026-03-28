@@ -615,7 +615,7 @@ async function handleCreatePoll(e) {
   const qrFile = document.getElementById('qrUpload')?.files?.[0];
   if (qrFile) formData.append('qrImage', qrFile);
   try {
-    const res = await fetch('/api/create-poll', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch('https://printshop-backend.onrender.com/api/create-poll', { method: 'POST', body: formData, credentials: 'include' });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     toast(`Poll created for "${data.poll.subject}" 🎉`, 'success');
