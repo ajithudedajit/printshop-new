@@ -6,7 +6,6 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-connectDB();
 
 const PORT = process.env.PORT || 3000;
 
@@ -21,14 +20,16 @@ const PORT = process.env.PORT || 3000;
 });
 
 // ================= CORS (RENDER SAFE) =================
-const allowedOrigins = process.env.ALLOWED_ORIGIN
-  ? [process.env.ALLOWED_ORIGIN]
-  : ['http://localhost:3000'];
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://printshop-final.onrender.com'
+];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow no-origin requests (same-origin) and listed origins
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
     callback(new Error('CORS blocked: ' + origin));
   },
   credentials: true
